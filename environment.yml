@@ -5,12 +5,12 @@ channels:
   - defaults
 dependencies:
   - python >=3.6
-  - cudatoolkit=10.0
-  - cudnn=7.6.5
-  - pytorch=1.2.0
-  - torchvision=0.4.0
+  - cudatoolkit>=10.0
+  - cudnn>=7.6.5
+  - pytorch>=1.2.0
+  - torchvision>=0.4.0
   - pip
   - pip:
       - opencv-python
       - numpy
-      - StereoVision=1.0.4
+      - StereoVision>=1.0.4
