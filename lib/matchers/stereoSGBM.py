@@ -2,27 +2,27 @@ import cv2
 
 class StereoSGBMMatcher:
     def __init__(self, config):
-        self.width = config['general']['width']
-        self.height = config['general']['height']
+        self.width = int(config['general']['width'])
+        self.height = int(config['general']['height'])
 
-        downsample = config['general']['downsample_factor']
+        downsample = int(config['general']['downsample_factor'])
 
-        self.resize = (int(self.width / downsample), int(self.height / downsample))
+        self.resize = (self.width // downsample, self.height // downsample)
 
-        blockSize = config['stereosgbm']['block_size']
+        blockSize = int(config['stereosgbm']['block_size'])
 
         # Apply configuration settings
         self.sbm = cv2.StereoSGBM_create(
-            config['stereosgbm']['min_disparity'],
-            config['stereosgbm']['num_disparities'],
+            int(config['stereosgbm']['min_disparity']),
+            int(config['stereosgbm']['num_disparities']),
             blockSize,
-            config['stereosgbm']['p1_factor'] * blockSize * blockSize,
-            config['stereosgbm']['p2_factor'] * blockSize * blockSize,
-            config['stereosgbm']['disp_12_max_diff'],
-            config['stereosgbm']['pre_filter_cap'],
-            config['stereosgbm']['uniqueness_ratio'],
-            config['stereosgbm']['speckle_window'],
-            config['stereosgbm']['speckle_range'])
+            int(config['stereosgbm']['p1_factor']) * blockSize * blockSize,
+            int(config['stereosgbm']['p2_factor']) * blockSize * blockSize,
+            int(config['stereosgbm']['disp_12_max_diff']),
+            int(config['stereosgbm']['pre_filter_cap']),
+            int(config['stereosgbm']['uniqueness_ratio']),
+            int(config['stereosgbm']['speckle_window']),
+            int(config['stereosgbm']['speckle_range']))
 
     def process_pair(self, rectified_pair):
         left = cv2.resize(rectified_pair[0], self.resize)

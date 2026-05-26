@@ -21,8 +21,8 @@ class Calibration:
         self.width = int(config['general']['width'])
         self.height = int(config['general']['height'])
 
-        self.left_camera_id = config['general']['left_camera_id']
-        self.right_camera_id = config['general']['right_camera_id']
+        self.left_camera_id = int(config['general']['left_camera_id'])
+        self.right_camera_id = int(config['general']['right_camera_id'])
 
         self.capture_directory = capture_directory
         self.load_directory = load_directory
@@ -91,12 +91,7 @@ class Calibration:
         print('Calibration :: Computing...')
 
         
-        self.chessboard_size = float(self.chessboard_size)
-        self.chessboard_rows = int(self.chessboard_rows)
-        self.chessboard_cols = int(self.chessboard_cols)
-        self.width = int(self.width)
-        self.height = int(self.height)
-        calibrator = StereoCalibrator( self.chessboard_rows,  self.chessboard_cols,  self.chessboard_size, (self.width, self.height))
+        calibrator = StereoCalibrator(self.chessboard_rows, self.chessboard_cols, self.chessboard_size, (self.width, self.height))
 
         for i in range (0, 30, 1):
             if not os.path.exists(self.capture_directory + 'left/img' + str(i) + '.png'):

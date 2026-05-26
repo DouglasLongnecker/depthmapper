@@ -15,13 +15,13 @@ class StereoCapture:
         self.calibrator = calibrator
         self.stopped = False
 
-        self.width = config['general']['width']
-        self.height = config['general']['height']
+        self.width = int(config['general']['width'])
+        self.height = int(config['general']['height'])
 
-        self.left_camera_id = config['general']['left_camera_id']
-        self.right_camera_id = config['general']['right_camera_id']
+        self.left_camera_id = int(config['general']['left_camera_id'])
+        self.right_camera_id = int(config['general']['right_camera_id'])
 
-        self.show_rgb = config['general']['show_rgb_frame']
+        self.show_rgb = config.getboolean('general', 'show_rgb_frame')
 
         print(matcher)
 

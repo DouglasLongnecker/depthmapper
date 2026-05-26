@@ -9,9 +9,9 @@ def gstreamer_pipeline(
     sensor_mode=3,
     flip_method=0,
 ):
-    framerate = config['general']['framerate']
-    display_width = config['general']['width']
-    display_height = config['general']['height']
+    framerate = int(config['general']['framerate'])
+    display_width = int(config['general']['width'])
+    display_height = int(config['general']['height'])
 
     return (
         "nvarguscamerasrc sensor-id=%d sensor-mode=%d ! "
@@ -27,10 +27,10 @@ def gstreamer_pipeline(
             sensor_mode,
             int(capture_width),
             int(capture_height),
-            int(framerate),
+            framerate,
             flip_method,
-            int(display_width),
-            int(display_height),
+            display_width,
+            display_height,
         )
     )
 
