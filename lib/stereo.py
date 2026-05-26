@@ -1,7 +1,7 @@
 import cv2
 import sys
 import numpy as np
-from lib.helpers import open_capture
+from lib.helpers import open_capture, wait_for_valid_frames
 
 import time
 
@@ -38,6 +38,7 @@ class StereoCapture:
     def produce_depth_map(self):
         self.leftCapture = open_capture(self.left_camera_id, self.config)
         self.rightCapture = open_capture(self.right_camera_id, self.config)
+        wait_for_valid_frames([self.leftCapture, self.rightCapture])
 
         cv2.namedWindow("Depth map")
 
@@ -50,7 +51,7 @@ class StereoCapture:
             left_grabbed, left_frame = self.leftCapture.read()
             right_grabbed, right_frame = self.rightCapture.read()
 
-            if left_grabbed and right_grabbed:
+            if left_grabbed and right_grabbed and left_frame is not None and right_frame is not None:
                 rectified_pair = self.rectify(left_frame, right_frame)
                 disparity = self.matcher.process_pair(rectified_pair)
 

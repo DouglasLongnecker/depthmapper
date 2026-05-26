@@ -1,11 +1,11 @@
 import cv2
-from threading import Thread
+from threading import Lock, Thread
 
 class Camera:
     def __init__(self, pipeline, id):
-        self.camera = cv2.VideoCapture(pipeline)
-        (self.grabbed, self.frame) = self.camera.read()
-
+        self.camera = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
+        self.lock = Lock()
+        self.grabbed = False
         self.frame = None
         self.stopped = False
 
@@ -22,10 +22,17 @@ class Camera:
         self.thread.join()
 
     def read(self):
-        return (self.grabbed, self.frame)
+        with self.lock:
+            if not self.grabbed or self.frame is None or self.frame.size == 0:
+                return (False, None)
+
+            return (True, self.frame.copy())
 
     def thread(self):
         while self.stopped == False:
-            (self.grabbed, self.frame) = self.camera.read()
+            grabbed, frame = self.camera.read()
+            with self.lock:
+                self.grabbed = grabbed and frame is not None and frame.size > 0
+                self.frame = frame if self.grabbed else None
 
         self.camera.release()

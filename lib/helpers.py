@@ -34,6 +34,22 @@ def gstreamer_pipeline(
         )
     )
 
+def wait_for_valid_frames(captures, max_attempts=100):
+    for attempt in range(1, max_attempts + 1):
+        all_valid = True
+        for capture in captures:
+            grabbed, frame = capture.read()
+            if not grabbed or frame is None or frame.size == 0:
+                all_valid = False
+                break
+
+        if all_valid:
+            if attempt > 1:
+                print(f'Cameras ready after {attempt} frames')
+            return
+
+    raise Exception(f'Could not get valid frames from all cameras after {max_attempts} attempts')
+
 def open_capture(id, config):
     stream = gstreamer_pipeline(id, config)
     capture = Camera(stream, id)
