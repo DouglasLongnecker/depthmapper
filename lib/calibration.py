@@ -13,13 +13,13 @@ from lib.helpers import open_capture
 # stereo cameras.
 class Calibration:
     def __init__(self, config, load_directory, capture_directory = '/tmp/stereo/'):
-        self.width = config['general']['width']
-        self.height = config['general']['height']
         self.config = config
 
-        self.chessboard_rows = config['calibration']['chessboard_rows']
-        self.chessboard_cols = config['calibration']['chessboard_cols']
-        self.chessboard_size = config['calibration']['chessboard_size']
+        self.chessboard_rows = int(config['calibration']['chessboard_rows'])
+        self.chessboard_cols = int(config['calibration']['chessboard_cols'])
+        self.chessboard_size = float(config['calibration']['chessboard_size'])
+        self.width = int(config['general']['width'])
+        self.height = int(config['general']['height'])
 
         self.left_camera_id = config['general']['left_camera_id']
         self.right_camera_id = config['general']['right_camera_id']
@@ -49,17 +49,41 @@ class Calibration:
         print('Waiting 5s...')
         time.sleep(5)
 
-        for i in range (0, 30, 1):
+        for i in range(0, 30, 1):
             print('Waiting 1s...')
             time.sleep(1)
 
             _, frame1 = leftCapture.read()
             _, frame2 = rightCapture.read()
 
+
             cv2.imwrite(self.capture_directory + 'left/img' + str(i) + '.png', frame1)
             cv2.imwrite(self.capture_directory + 'right/img' + str(i) + '.png', frame2)
 
-            print('Frame ' + str(i) + ' done')
+            # Try to find and draw chessboard corners for visual feedback
+            gray1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
+            gray2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+
+            ret1, corners1 = cv2.findChessboardCorners(gray1, (self.chessboard_cols, self.chessboard_rows), None)
+            ret2, corners2 = cv2.findChessboardCorners(gray2, (self.chessboard_cols, self.chessboard_rows), None)
+
+            cv2.drawChessboardCorners(frame1, (self.chessboard_cols, self.chessboard_rows), corners1, ret1)
+            cv2.drawChessboardCorners(frame2, (self.chessboard_cols, self.chessboard_rows), corners2, ret2)
+
+            # Add status text
+            status = 'DETECTED' if (ret1 and ret2) else 'NOT FOUND'
+            color = (0, 255, 0) if (ret1 and ret2) else (0, 0, 255)
+            cv2.putText(frame1, status, (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+            cv2.putText(frame1, f'Captured: {i}/30', (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+
+            cv2.imshow('Left', frame1)
+            cv2.imshow('Right', frame2)
+            cv2.waitKey(1)
+
+            print('Frame ' + str(i) + ' done - ' + status)
+
+        cv2.destroyAllWindows()
+
 
         print('Calibration :: Captured.')
 
