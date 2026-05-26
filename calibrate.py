@@ -13,7 +13,7 @@ def main():
 
     calibrator = Calibration(config, LOAD_DIR)
     input('Hit any key when you have the chessboard prepared')
-
+    calibrator.capture_images()
     calibrator.compute_calibration(True)
 
 if __name__ == '__main__':

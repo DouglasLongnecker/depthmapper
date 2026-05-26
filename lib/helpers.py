@@ -23,19 +23,19 @@ def gstreamer_pipeline(
         "videoconvert ! "
         "video/x-raw, format=(string)BGR ! appsink"
         % (
-            id,
+            int(id),
             sensor_mode,
-            capture_width,
-            capture_height,
-            framerate,
+            int(capture_width),
+            int(capture_height),
+            int(framerate),
             flip_method,
-            display_width,
-            display_height,
+            int(display_width),
+            int(display_height),
         )
     )
 
-def open_capture(id, width, height):
-    stream = gstreamer_pipeline(id, width, height)
+def open_capture(id, config):
+    stream = gstreamer_pipeline(id, config)
     capture = Camera(stream, id)
 
     if not capture.isOpened():

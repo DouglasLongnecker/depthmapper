@@ -15,6 +15,7 @@ class Calibration:
     def __init__(self, config, load_directory, capture_directory = '/tmp/stereo/'):
         self.width = config['general']['width']
         self.height = config['general']['height']
+        self.config = config
 
         self.chessboard_rows = config['calibration']['chessboard_rows']
         self.chessboard_cols = config['calibration']['chessboard_cols']
@@ -42,8 +43,8 @@ class Calibration:
     def capture_images(self):
         print('Calibration :: Capturing frames...')
 
-        leftCapture = open_capture(self.left_camera_id, self.width, self.height)
-        rightCapture = open_capture(self.right_camera_id, self.width, self.height)
+        leftCapture = open_capture(self.left_camera_id, self.config)
+        rightCapture = open_capture(self.right_camera_id, self.config)
 
         print('Waiting 5s...')
         time.sleep(5)
@@ -65,6 +66,12 @@ class Calibration:
     def compute_calibration(self, show_results = False):
         print('Calibration :: Computing...')
 
+        
+        self.chessboard_size = float(self.chessboard_size)
+        self.chessboard_rows = int(self.chessboard_rows)
+        self.chessboard_cols = int(self.chessboard_cols)
+        self.width = int(self.width)
+        self.height = int(self.height)
         calibrator = StereoCalibrator( self.chessboard_rows,  self.chessboard_cols,  self.chessboard_size, (self.width, self.height))
 
         for i in range (0, 30, 1):
@@ -95,8 +102,8 @@ class Calibration:
         print('Calibration :: Exported to ' + self.load_directory)
 
         if show_results:
-            leftCapture = open_capture(self.left_camera_id, self.width, self.height)
-            rightCapture = open_capture(self.right_camera_id, self.width, self.height)
+            leftCapture = open_capture(self.left_camera_id, self.config)
+            rightCapture = open_capture(self.right_camera_id, self.config)
 
             cv2.namedWindow('Undistorted')
 
